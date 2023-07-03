@@ -1,0 +1,41 @@
+modLoader="javafml"
+loaderVersion="[41,)"
+license="All rights reserved"
+[[mods]]
+modId="kakapos"
+version="0.0.1-1.19.2"
+displayName="Kakapos" #mandatory
+# A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+# A URL for the "homepage" for this mod, displayed in the mod UI
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+logoFile="icon.png"
+credits="Thanks to the amazing community at the Odd Water Mobs discord server!"
+authors="Jocosero"
+description='''
+A simple mod that adds the kakapo parrot to the jungle biome!
+'''
+[[dependencies.kakapos]]
+modId="forge"
+mandatory=true
+versionRange="[41,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.kakapos]]
+modId="forge"
+mandatory=true
+versionRange="[41,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.kakapos]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.19,1.20)"
+ordering="NONE"
+side="BOTH"
+#[[dependencies.kakapos]]
+#modId="geckolib"
+#mandatory=true
+#versionRange="[3.1.0,)"
+#ordering="NONE"
+#side="BOTH"

@@ -1,0 +1,8 @@
+{
+  "item.kakapos.kakapo_spawn_egg": "Kakapo Spawn Egg",
+  "entity.kakapos.kakapo": "Kakapo",
+
+  "sounds.kakapos.kakapo_ambient": "Kakapo screeches",
+  "sounds.kakapos.kakapo_hurt": "Kakapo is hurt",
+  "sounds.kakapos.kakapo_death": "Kakapo dies"
+}

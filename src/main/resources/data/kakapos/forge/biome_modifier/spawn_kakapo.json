@@ -1,0 +1,12 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:sparse_jungle"
+  ],
+  "spawners": {
+    "type": "kakapos:kakapo",
+    "weight": 7,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

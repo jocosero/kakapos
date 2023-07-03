@@ -1,0 +1,20 @@
+{
+  "kakapo_ambient": {
+    "subtitle": "sounds.kakapos.kakapo_ambient",
+    "sounds": [
+      "kakapos:kakapo_ambient"
+    ]
+  },
+  "kakapo_hurt": {
+    "subtitle": "sounds.kakapos.kakapo_hurt",
+    "sounds": [
+      "kakapos:kakapo_hurt"
+    ]
+  },
+  "kakapo_death": {
+    "subtitle": "sounds.kakapos.kakapo_death",
+    "sounds": [
+      "kakapos:kakapo_death"
+    ]
+  }
+}
