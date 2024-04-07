@@ -1,0 +1,8 @@
+{
+  "item.kakapos.kakapo_spawn_egg": "Generar kakapo",
+  "entity.kakapos.kakapo": "Kakapo",
+
+  "sounds.kakapos.kakapo_ambient": "Kakapo grita",
+  "sounds.kakapos.kakapo_hurt": "Kakapo es herido",
+  "sounds.kakapos.kakapo_death": "Kakapo muere"
+}

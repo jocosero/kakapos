@@ -10,7 +10,7 @@ displayName="Kakapos" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
 logoFile="icon.png"
-credits="Thanks to the amazing community at the Odd Water Mobs discord server!"
+credits="Thanks to the amazing community at the Odd Water Mobs discord server."
 authors="Jocosero"
 description='''
 A simple mod that adds the kakapo parrot to the jungle biome!

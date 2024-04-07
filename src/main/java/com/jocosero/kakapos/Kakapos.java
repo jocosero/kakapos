@@ -26,7 +26,12 @@ public class Kakapos {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public Kakapos() {
+
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+
+        modEventBus.addListener(this::commonSetup);
 
         ModItems.register(modEventBus);
 
@@ -36,16 +41,20 @@ public class Kakapos {
 
         GeckoLib.initialize();
 
-        modEventBus.addListener(this::commonSetup);
-
         MinecraftForge.EVENT_BUS.register(this);
+
+
     }
 
+
     private void commonSetup(final FMLCommonSetupEvent event) {
+
         event.enqueueWork(() -> {
+
             SpawnPlacements.register(ModEntityTypes.KAKAPO.get(),
                     SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     Animal::checkAnimalSpawnRules);
+
         });
     }
 
@@ -55,6 +64,9 @@ public class Kakapos {
         public static void onClientSetup(FMLClientSetupEvent event) {
             EntityRenderers.register(ModEntityTypes.KAKAPO.get(), KakapoRenderer::new);
 
+
         }
+
     }
+
 }

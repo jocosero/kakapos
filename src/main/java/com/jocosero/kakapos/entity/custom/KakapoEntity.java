@@ -38,7 +38,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 import static software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes.LOOP;
 
 public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.APPLE, Items.GOLDEN_APPLE);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.APPLE, Items.CARROT, Items.GOLDEN_APPLE);
     public AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private boolean partyParrot;
     @Nullable
@@ -50,7 +50,7 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
 
     public static AttributeSupplier setAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 12.0D)
+                .add(Attributes.MAX_HEALTH, 12)
                 .add(Attributes.MOVEMENT_SPEED, 0.15F)
                 .build();
     }
@@ -124,10 +124,6 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
                 return super.mobInteract(pPlayer, pHand);
             }
 
-            if (itemstack.getItem() == Items.STICK) {
-                this.startRiding(pPlayer, true);
-            }
-
             return InteractionResult.sidedSuccess(true);
         } else {
             return super.mobInteract(pPlayer, pHand);
@@ -151,7 +147,7 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
 
     public void setRecordPlayingNearby(BlockPos pPos, boolean pIsPartying) {
         this.jukebox = pPos;
-        this.partyParrot = pIsPartying;
+        partyParrot = pIsPartying;
     }
 
     public boolean isPartyParrot() {
@@ -218,7 +214,7 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
             return PlayState.CONTINUE;
         }
 
-        if (!isOnGround()) {
+        if (!isOnGround() && !isPassenger()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.flapping", LOOP));
             return PlayState.CONTINUE;
         }
