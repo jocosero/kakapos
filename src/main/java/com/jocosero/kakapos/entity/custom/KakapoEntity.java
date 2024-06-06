@@ -8,10 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -26,23 +23,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
 
-import static software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes.LOOP;
-
-public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
+public class KakapoEntity extends ShoulderRidingEntity {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.APPLE, Items.CARROT, Items.GOLDEN_APPLE);
-    public AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    public final AnimationState idleAnimationState = new AnimationState();
+    public final AnimationState danceAnimationState = new AnimationState();
+    public final AnimationState sitAnimationState = new AnimationState();
+    public final AnimationState preenAnimationState = new AnimationState();
+    public final AnimationState fallAnimationState = new AnimationState();
+    public final AnimationState runAnimationState = new AnimationState();
+
     private boolean partyParrot;
     @Nullable
     private BlockPos jukebox;
+    private int idleAnimationTimeout = 0;
+    private int fallAnimationTimeout = 0;
+    private int preenAnimationTimeout = this.random.nextInt(11) + 10;
+    private double lastTickPosX, lastTickPosY, lastTickPosZ;
 
     public KakapoEntity(EntityType<? extends ShoulderRidingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -68,13 +65,22 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
     }
 
     public void aiStep() {
-        if (this.jukebox == null || !this.jukebox.closerToCenterThan(this.position(), 3.46D) || !this.level.getBlockState(this.jukebox).is(Blocks.JUKEBOX)) {
+        this.lastTickPosX = this.getX();
+        this.lastTickPosY = this.getY();
+        this.lastTickPosZ = this.getZ();
+        if (this.jukebox == null || !this.jukebox.closerToCenterThan(this.position(), 3.46D) || !this.level().getBlockState(this.jukebox).is(Blocks.JUKEBOX)) {
             this.partyParrot = false;
             this.jukebox = null;
         }
+        if (this.partyParrot) {
+            this.danceAnimationState.startIfStopped(this.tickCount);
+        } else {
+            this.danceAnimationState.stop();
+        }
+
         super.aiStep();
         Vec3 vec3 = this.getDeltaMovement();
-        if (!this.onGround && vec3.y < 0.0D) {
+        if (!this.onGround() && vec3.y < 0.0D) {
             this.setDeltaMovement(vec3.multiply(1.0D, 0.8D, 1.0D));
         }
 
@@ -85,8 +91,68 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
                 this.stopRiding();
             }
         }
+
+        if (this.isInSittingPose()) {
+            this.sitAnimationState.start(this.tickCount);
+        } else {
+            this.sitAnimationState.stop();
+        }
+
+        if (this.level().isClientSide) {
+            setupAnimationStates();
+//            setupPreenAnimationState();
+            setupFallAnimationState();
+        }
     }
 
+    private void setupAnimationStates() {
+        if (this.idleAnimationTimeout <= 0) {
+            this.idleAnimationTimeout = this.random.nextInt(40) + 80;
+            this.idleAnimationState.startIfStopped(this.tickCount);
+        } else {
+            --this.idleAnimationTimeout;
+        }
+    }
+
+    private void setupFallAnimationState() {
+        if (!this.onGround()) {
+            ++this.fallAnimationTimeout;
+            if (this.fallAnimationTimeout >= 10) {
+                this.fallAnimationState.startIfStopped(this.tickCount);
+            }
+        } else {
+            this.fallAnimationTimeout = 0;
+            this.fallAnimationState.stop();
+        }
+    }
+
+    @Override
+    protected void updateWalkAnimation(float pPartialTick) {
+        float f;
+        if (this.getPose() == Pose.STANDING && isMoving()) {
+            f = Math.min(pPartialTick + 6F, 1F);
+        } else {
+            f = 0F;
+        }
+
+        this.walkAnimation.update(f, 0.2F);
+    }
+
+    private boolean isMoving() {
+        double dx = this.getX() - this.lastTickPosX;
+        double dy = this.getY() - this.lastTickPosY;
+        double dz = this.getZ() - this.lastTickPosZ;
+        return dx * dx + dy * dy + dz * dz > 0.001D;
+    }
+
+//    private void setupPreenAnimationState() {
+//        if (this.preenAnimationTimeout <= 0) {
+//            this.preenAnimationTimeout = this.random.nextInt(11) + 10;
+//            this.preenAnimationState.startIfStopped(this.tickCount);
+//        } else {
+//            --this.preenAnimationTimeout;
+//        }
+//    }
 
     public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
@@ -96,19 +162,19 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
             }
 
             if (!this.isSilent()) {
-                this.level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PARROT_EAT, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PARROT_EAT, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
             }
 
-            if (!this.level.isClientSide) {
+            if (!this.level().isClientSide) {
                 if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, pPlayer)) {
                     this.tame(pPlayer);
-                    this.level.broadcastEntityEvent(this, (byte) 7);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
                 } else {
-                    this.level.broadcastEntityEvent(this, (byte) 6);
+                    this.level().broadcastEntityEvent(this, (byte) 6);
                 }
             }
 
-            return InteractionResult.sidedSuccess(this.level.isClientSide);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
         } else if (this.isTame() && this.isOwnedBy(pPlayer)) {
             if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
                 if (!pPlayer.getAbilities().instabuild) {
@@ -119,7 +185,7 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
                 this.gameEvent(GameEvent.EAT, this);
                 return InteractionResult.SUCCESS;
             }
-            if (!this.level.isClientSide) {
+            if (!this.level().isClientSide) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 return super.mobInteract(pPlayer, pHand);
             }
@@ -165,10 +231,15 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {
+        if (this.isMoving()) {
+            this.runAnimationState.start(this.tickCount);
+        } else {
+            this.runAnimationState.stop();
+        }
         if (this.isInvulnerableTo(pSource)) {
             return false;
         } else {
-            if (!this.level.isClientSide) {
+            if (!this.level().isClientSide) {
                 this.setOrderedToSit(false);
             }
 
@@ -176,7 +247,6 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
         }
     }
 
-    //This one is Kakapo exclusive. It checks if the player is doing any action that wouldn't allow the kakapo to ride it.
     private boolean shouldStopRiding(Player player) {
         return player.isCrouching() || player.isInFluidType() || player.isSpectator() || player.isSleeping();
     }
@@ -207,48 +277,4 @@ public class KakapoEntity extends ShoulderRidingEntity implements IAnimatable {
         return null;
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-
-        if (isPartyParrot()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.dance", LOOP));
-            return PlayState.CONTINUE;
-        }
-
-        if (!isOnGround() && !isPassenger()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.flapping", LOOP));
-            return PlayState.CONTINUE;
-        }
-
-        if (event.isMoving()) {
-            Vec3 vec3 = getDeltaMovement();
-            double speed = Math.sqrt(vec3.x * vec3.x + vec3.z * vec3.z);
-            if (speed > 0.06F) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.running", LOOP));
-                return PlayState.CONTINUE;
-            }
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.walking", LOOP));
-        } else {
-            if (!isInSittingPose()) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.idle", LOOP));
-            }
-            if (isInSittingPose()) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kakapo.sitting", LOOP));
-            }
-            return PlayState.CONTINUE;
-        }
-
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController(this, "controller",
-                2, this::predicate));
-
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
 }

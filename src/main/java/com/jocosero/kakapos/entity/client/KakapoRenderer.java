@@ -3,19 +3,14 @@ package com.jocosero.kakapos.entity.client;
 import com.jocosero.kakapos.Kakapos;
 import com.jocosero.kakapos.entity.custom.KakapoEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
-import javax.annotation.Nullable;
-
-public class KakapoRenderer extends GeoEntityRenderer<KakapoEntity> {
-    public KakapoRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new KakapoModel());
-        this.shadowRadius = 0.3f;
+public class KakapoRenderer extends MobRenderer<KakapoEntity, KakapoModel<KakapoEntity>> {
+    public KakapoRenderer(EntityRendererProvider.Context pContext) {
+        super(pContext, new KakapoModel<>(pContext.bakeLayer(ModModelLayers.KAKAPO_LAYER)), 0.3f);
     }
 
     @Override
@@ -24,11 +19,7 @@ public class KakapoRenderer extends GeoEntityRenderer<KakapoEntity> {
     }
 
     @Override
-    public RenderType getRenderType(KakapoEntity animatable, float partialTicks, PoseStack stack,
-                                    @Nullable MultiBufferSource renderTypeBuffer,
-                                    @Nullable VertexConsumer vertexBuilder, int packedLightIn,
-                                    ResourceLocation textureLocation) {
-
-        return super.getRenderType(animatable, partialTicks, stack, renderTypeBuffer, vertexBuilder, packedLightIn, textureLocation);
+    public void render(KakapoEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
+        super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
     }
 }

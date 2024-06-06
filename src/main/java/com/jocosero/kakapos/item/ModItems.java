@@ -1,8 +1,7 @@
-package com.jocosero.kakapos.item.custom;
+package com.jocosero.kakapos.item;
 
 import com.jocosero.kakapos.Kakapos;
 import com.jocosero.kakapos.entity.ModEntityTypes;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -15,8 +14,9 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, Kakapos.MOD_ID);
 
     public static final RegistryObject<Item> KAKAPO_SPAWN_EGG = ITEMS.register("kakapo_spawn_egg",
-            () -> new ForgeSpawnEggItem(ModEntityTypes.KAKAPO, 0xbd9746, 0x788c13,
-                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            () -> new ForgeSpawnEggItem(ModEntityTypes.KAKAPO, 0xbd9746, 0x788c13, new Item.Properties()));
 
-    public static void register(IEventBus eventBus) { ITEMS.register(eventBus);}
- }
+    public static void register(IEventBus eventBus) {
+        ITEMS.register(eventBus);
+    }
+}

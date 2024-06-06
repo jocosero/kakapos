@@ -3,12 +3,8 @@ loaderVersion="[41,)"
 license="All rights reserved"
 [[mods]]
 modId="kakapos"
-version="0.0.1-1.19.2"
-displayName="Kakapos" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/"
+version="0.1.0-1.20"
+displayName="Kakapos"
 logoFile="icon.png"
 credits="Thanks to the amazing community at the Odd Water Mobs discord server."
 authors="Jocosero"
@@ -30,12 +26,6 @@ side="BOTH"
 [[dependencies.kakapos]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19,1.20)"
+versionRange="[1.20,1.21)"
 ordering="NONE"
 side="BOTH"
-#[[dependencies.kakapos]]
-#modId="geckolib"
-#mandatory=true
-#versionRange="[3.1.0,)"
-#ordering="NONE"
-#side="BOTH"
