@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "Kakapos resources"
-    },
-    "pack_format": 15
+        "pack_format": 15,
+        "description": "Kakapos Resources"
+    }
 }
