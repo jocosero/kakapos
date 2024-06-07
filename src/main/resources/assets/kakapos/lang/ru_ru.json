@@ -1,0 +1,8 @@
+{
+  "item.kakapos.kakapo_spawn_egg": "Яйцо призыва попугая Какапо",
+  "entity.kakapos.kakapo": "Попугай Какапо",
+
+  "sounds.kakapos.kakapo_ambient": "Какапо визжит",
+  "sounds.kakapos.kakapo_hurt": "Какапо ранен",
+  "sounds.kakapos.kakapo_death": "Какапо погибает"
+}
