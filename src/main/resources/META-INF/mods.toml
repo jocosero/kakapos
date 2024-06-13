@@ -3,7 +3,7 @@ loaderVersion="[41,)"
 license="All rights reserved"
 [[mods]]
 modId="kakapos"
-version="0.1.0-1.20"
+version="0.1.1-1.20"
 displayName="Kakapos"
 logoFile="icon.png"
 credits="Thanks to the amazing community at the Odd Water Mobs discord server."
